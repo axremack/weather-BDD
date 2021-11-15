@@ -1,10 +1,14 @@
-import java.sql.*;
+import Database.DBManager;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 
 public class Main {
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:src/Database/weather.db";
+        String filename = "weather.db";
 
-        try {
+        /*try {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(url);
             if (conn != null) {
@@ -14,6 +18,11 @@ public class Main {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
+
+        DBManager d = new DBManager(filename);
+        d.createWeatherTable();
+
+
     }
 }
