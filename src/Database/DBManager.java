@@ -30,7 +30,10 @@ public class DBManager {
                 Statement s = conn.createStatement();
                 s.execute(query.toString());
                 System.out.println("Table successfully created");
+
+                s.close();
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,7 +60,9 @@ public class DBManager {
                 s.setDouble(4, (double) list_values.get(3));
                 s.executeUpdate();
                 System.out.println("Values have been added to database");
+                s.close();
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,6 +75,8 @@ public class DBManager {
             Connection conn = DriverManager.getConnection(url);
             Statement s = conn.createStatement();
             s.execute(query);
+            conn.close();
+            s.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,6 +96,10 @@ public class DBManager {
                         rs.getDouble("current_temperature") + " - " +
                         rs.getDouble("wind_speed"));
             }
+
+            conn.close();
+            s.close();
+            rs.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
