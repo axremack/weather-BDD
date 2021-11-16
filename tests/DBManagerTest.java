@@ -44,6 +44,7 @@ public class DBManagerTest extends TestCase {
         super.setUp();
         System.setOut(new PrintStream(outContent));
         d = new DBManager(url);
+        d.createWeatherTable();
     }
 
     @Override
@@ -54,8 +55,6 @@ public class DBManagerTest extends TestCase {
 
     @Test
     public void testTableCreation() {
-        d.createWeatherTable();
-
         try {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(url);
@@ -85,7 +84,6 @@ public class DBManagerTest extends TestCase {
 
     @Test
     public void testValueInsertion() {
-        d.createWeatherTable();
         d.insertValues(listValues);
 
         try {
@@ -121,13 +119,11 @@ public class DBManagerTest extends TestCase {
             add(0.0);
         }};
 
-        d.createWeatherTable();
         d.insertValues(listValues);
         d.insertValues(listValues2);
 
         d.displayDB();
-        assertEquals("Table successfully created\n" +
-                "Values have been added to database\n" +
+        assertEquals("Values have been added to database\n" +
                 "Values have been added to database\n" +
                 "3 - city - 20.0 - 3.0\n" +
                 "4 - city2 - 21.0 - 0.0\n",
@@ -143,13 +139,11 @@ public class DBManagerTest extends TestCase {
             add(0.0);
         }};
 
-        d.createWeatherTable();
         d.insertValues(listValues);
         d.insertValues(listValues2);
 
         d.displayDBOrderedBy("city");
-        assertEquals("Table successfully created\n" +
-                        "Values have been added to database\n" +
+        assertEquals("Values have been added to database\n" +
                         "Values have been added to database\n" +
                         "4 - a - 21.0 - 0.0\n" +
                         "3 - city - 20.0 - 3.0\n",
@@ -165,17 +159,24 @@ public class DBManagerTest extends TestCase {
             add(0.0);
         }};
 
-        d.createWeatherTable();
         d.insertValues(listValues);
         d.insertValues(listValues2);
 
         d.displayDBOrderedBy("current_temperature");
-        assertEquals("Table successfully created\n" +
-                        "Values have been added to database\n" +
+        assertEquals("Values have been added to database\n" +
                         "Values have been added to database\n" +
                         "4 - city2 - 6.0 - 0.0\n" +
                         "3 - city - 20.0 - 3.0\n",
                 outContent.toString());
+    }
+
+    @Test
+    public void testFinding() {
+        d.insertValues(listValues);
+
+        assertTrue(d.findInDB("city"));
+        assertFalse(d.findInDB("Mexico"));
+
     }
 
 
