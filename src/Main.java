@@ -2,6 +2,7 @@ import CityWeather.CityWeather;
 import Database.DBManager;
 import WeatherParsing.WeatherFetcher;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,12 @@ public class Main {
 
         try {
             DBManager d = new DBManager(url);
-            d.findInDB(args[0]);
+            boolean found = d.findInDB(args[0]);
+
+            if(!found) {
+
+            }
+
 
             //WeatherFetcher weatherFetcher = new WeatherFetcher();
             //weather = weatherFetcher.getWeatherIn(args[0]);

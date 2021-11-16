@@ -1,7 +1,10 @@
 package Database;
 
 import java.sql.*;
+import java.util.Date;
 import java.util.List;
+
+import static java.lang.String.valueOf;
 
 public class DBManager {
     public static String url;
@@ -139,8 +142,9 @@ public class DBManager {
         }
     }
 
-    public static void findInDB(String city) {
+    public static boolean findInDB(String city) {
         String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather WHERE city LIKE \"%" + city + "%\";";
+        boolean found = false;
 
         try {
             Connection conn = DriverManager.getConnection(url);
@@ -148,10 +152,14 @@ public class DBManager {
             ResultSet rs = s.executeQuery(query);
 
             while (rs.next()) {
-                System.out.println(rs.getInt("fetched_at") + " - " +
-                        rs.getString("city") + " - " +
-                        rs.getDouble("current_temperature") + " - " +
-                        rs.getDouble("wind_speed"));
+                StringBuilder summary = new StringBuilder();
+                summary.append("Weather fetched at : ").append(new Date(Long.parseLong(valueOf(rs.getInt("fetched_at"))) * 1000)).append("\n")
+                        .append("Weather for city : ").append(rs.getString("city")).append("\n")
+                        .append("\tCurrent temperature : ").append(rs.getDouble("current_temperature")).append("°C\n")
+                        .append("\tWind speed : ").append(rs.getDouble("wind_speed")).append(" m/s\n");
+                System.out.println(summary);
+
+                found = true;
             }
 
             conn.close();
@@ -160,5 +168,7 @@ public class DBManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return found;
     }
 }
