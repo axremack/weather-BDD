@@ -9,60 +9,52 @@ import java.util.List;
 public class DBManagerTest extends TestCase {
 
     private String url = "jdbc:sqlite:tests/test.db";
+    private DBManager d;
+
     private List<String> listColumns = new ArrayList<>(){{
         add("fetchedAt");
         add("city");
-        add("general_weather_type");
-        add("general_weather_description");
         add("current_temperature");
-        add("felt_temperature");
-        add("min_temperature");
-        add("max_temperature");
-        add("pressure");
-        add("humidity");
         add("wind_speed");
-        add("wind_deg");
-        add("wind_gust");
     }};
 
     private List<String> listTypes = new ArrayList<>(){{
         add("INTEGER");
         add("VARCHAR(100)");
-        add("VARCHAR(100)");
-        add("VARCHAR(100)");
-        add("DOUBLE");
-        add("DOUBLE");
-        add("DOUBLE");
-        add("DOUBLE");
-        add("INTEGER");
-        add("INTEGER");
-        add("DOUBLE");
         add("DOUBLE");
         add("DOUBLE");
     }};
+
+    private List<Object> listValues = new ArrayList<>(){{
+        add(3);
+        add("city");
+        add(20.0);
+        add(3.0);
+    }};
+
 
     // Les deux méthodes suivantes servent à empêcher les effets de bord
     @Override
     protected void setUp () throws Exception {
         super.setUp();
+        d = new DBManager(url);
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+        //d.dropTable();
     }
 
     // Testing table creation
     @Test
     public void testTableCreation() {
-        DBManager d = new DBManager(url);
         d.createWeatherTable();
 
         try {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(url);
             if (conn != null) {
-                // Verifying if the table is added to the database
                 DatabaseMetaData metaData = conn.getMetaData();
                 ResultSet rs_debug = metaData.getTables(null, null, "weather", null);
                 String nomTable = rs_debug.getString (3);
@@ -76,6 +68,31 @@ public class DBManagerTest extends TestCase {
                     assertEquals(listColumns.get(i), column_name);
                     assertEquals(listTypes.get(i), column_type);
                     i++;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Testing value insertion
+    @Test
+    public void testValueInsertion() {
+        d.createWeatherTable();
+        d.insertValues(listValues);
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(url);
+            if (conn != null) {
+                Statement s = conn.createStatement();
+                ResultSet rs = s.executeQuery ("SELECT * FROM weather");
+
+                while (rs.next()) {
+                    assertEquals(listValues.get(0), rs.getInt(1));
+                    assertEquals(listValues.get(1), rs.getString(2));
+                    assertEquals(listValues.get(2), rs.getDouble(3));
+                    assertEquals(listValues.get(3), rs.getDouble(4));
                 }
             }
         } catch (Exception e) {
