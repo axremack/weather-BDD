@@ -1,13 +1,13 @@
+import CityWeather.CityWeather;
 import Database.DBManager;
+import WeatherParsing.WeatherFetcher;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String url = "jdbc:sqlite:src/Database/weather.db";
 
         DBManager d = new DBManager(url);
@@ -15,15 +15,17 @@ public class Main {
         d.dropTable();
         d.createWeatherTable();
 
-        List<Object> list = new ArrayList<>(){{
-            add((int) (new java.util.Date().getTime() / 1000));
-            add("city");
-            add(20.0);
-            add(3.0);
+        WeatherFetcher wf = new WeatherFetcher();
+        CityWeather weather = wf.getWeatherIn("Clermont");
+
+        List<Object> list = new ArrayList<>() {{
+            add(weather.getDT());
+            add(weather.getCity());
+            add(weather.getTemp().getTemp());
+            add(weather.getWind().getSpeed());
         }};
 
         d.insertValues(list);
-
 
     }
 }
