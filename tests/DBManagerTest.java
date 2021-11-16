@@ -2,6 +2,8 @@ import Database.DBManager;
 import junit.framework.TestCase;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +13,11 @@ public class DBManagerTest extends TestCase {
     private String url = "jdbc:sqlite:tests/test.db";
     private DBManager d;
 
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
+
     private List<String> listColumns = new ArrayList<>(){{
-        add("fetchedAt");
+        add("fetched_at");
         add("city");
         add("current_temperature");
         add("wind_speed");
@@ -37,16 +42,16 @@ public class DBManagerTest extends TestCase {
     @Override
     protected void setUp () throws Exception {
         super.setUp();
+        System.setOut(new PrintStream(outContent));
         d = new DBManager(url);
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        //d.dropTable();
+        d.dropTable();
     }
 
-    // Testing table creation
     @Test
     public void testTableCreation() {
         d.createWeatherTable();
@@ -69,13 +74,15 @@ public class DBManagerTest extends TestCase {
                     assertEquals(listTypes.get(i), column_type);
                     i++;
                 }
+                rs_debug.close();
+                columns.close();
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Testing value insertion
     @Test
     public void testValueInsertion() {
         d.createWeatherTable();
@@ -94,9 +101,36 @@ public class DBManagerTest extends TestCase {
                     assertEquals(listValues.get(2), rs.getDouble(3));
                     assertEquals(listValues.get(3), rs.getDouble(4));
                 }
+
+                s.close();
+                rs.close();
             }
+            conn.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Test
+    public void testTableDisplay() {
+        List<Object> listValues2 = new ArrayList<>(){{
+            add(4);
+            add("city2");
+            add(21.0);
+            add(0.0);
+        }};
+
+        d.createWeatherTable();
+        d.insertValues(listValues);
+        d.insertValues(listValues2);
+
+        d.displayDB();
+        assertEquals("Table successfully created\n" +
+                "Values have been added to database\n" +
+                "Values have been added to database\n" +
+                "3 - city - 20.0 - 3.0\n" +
+                "4 - city2 - 21.0 - 0.0\n",
+            outContent.toString());
     }
 }
