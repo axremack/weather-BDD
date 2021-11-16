@@ -36,12 +36,12 @@ Le fichier de base de données est weather.db.
 ## ✅ Couverture des tests
 - [x] Création de table (*testTableCreation*)
 - [x] Insertion de données (*testValueInsertion*)
-- [ ] Insertion de données avec les mauvais types
-- [ ] Insertion de données NULL
+- [x] Insertion de données avec les mauvais types (*testInvalidValueInsertion*)
+- [x] Insertion de données NULL (*testNullValueInsertion*)
 - [x] Affichage par défaut (*testTableDisplay*)
 - [x] Affichage ordonné par ville (*testTableDisplayOrderedByCity*)
 - [x] Affichage ordonné par température (*testTableDisplayOrderedByTemperature*)
-- [ ] Affichage ordonné selon une colonne inexistante
+- [x] Affichage ordonné selon une colonne inexistante (*testTableDisplayOrderedByInvalid*)
 - [x] Recherche de valeur dans la base de données (*testFinding*)
 - [x] Succès de la récupération d'information d'une ville valide (*testGoodCity*)
 - [x] Lancement d'exception lorsqu'une mauvaise ville est demandée (*testInvalidCity*)

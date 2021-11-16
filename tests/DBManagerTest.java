@@ -111,6 +111,75 @@ public class DBManagerTest extends TestCase {
 
 
     @Test
+    public void testInvalidValueInsertion() {
+        List<Object> listInvalidValues = new ArrayList<>(){{
+            add("Not a number");
+            add("city2");
+            add(21.0);
+            add(0.0);
+        }};
+        d.insertValues(listInvalidValues);
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(url);
+            if (conn != null) {
+                Statement s = conn.createStatement();
+                ResultSet rs = s.executeQuery ("SELECT * FROM weather");
+
+                while (rs.next()) {
+                    assertEquals(listValues.get(0), rs.getInt(1));
+                    assertEquals(listValues.get(1), rs.getString(2));
+                    assertEquals(listValues.get(2), rs.getDouble(3));
+                    assertEquals(listValues.get(3), rs.getDouble(4));
+                }
+
+                s.close();
+                rs.close();
+            }
+            conn.close();
+        } catch (Exception e) {
+            assert(e.getMessage().contains("ClassCastException"));
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void testNullValueInsertion() {
+        List<Object> listInvalidValues = new ArrayList<>(){{
+            add(null);
+            add("city2");
+            add(21.0);
+            add(0.0);
+        }};
+        d.insertValues(listInvalidValues);
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(url);
+            if (conn != null) {
+                Statement s = conn.createStatement();
+                ResultSet rs = s.executeQuery ("SELECT * FROM weather");
+
+                while (rs.next()) {
+                    assertEquals(listValues.get(0), rs.getInt(1));
+                    assertEquals(listValues.get(1), rs.getString(2));
+                    assertEquals(listValues.get(2), rs.getDouble(3));
+                    assertEquals(listValues.get(3), rs.getDouble(4));
+                }
+
+                s.close();
+                rs.close();
+            }
+            conn.close();
+        } catch (Exception e) {
+            assert(e.getMessage().contains("NullPointerException"));
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void testTableDisplay() {
         List<Object> listValues2 = new ArrayList<>(){{
             add(4);
@@ -167,6 +236,24 @@ public class DBManagerTest extends TestCase {
                         "Values have been added to database\n" +
                         "4 - city2 - 6.0 - 0.0\n" +
                         "3 - city - 20.0 - 3.0\n",
+                outContent.toString());
+    }
+
+    @Test
+    public void testTableDisplayOrderedByInvalid() {
+        List<Object> listValues2 = new ArrayList<>(){{
+            add(4);
+            add("city2");
+            add(6.0);
+            add(0.0);
+        }};
+
+        d.insertValues(listValues);
+        d.insertValues(listValues2);
+
+        d.displayDBOrderedBy("inexistant_column");
+        assertEquals("Values have been added to database\n" +
+                "Values have been added to database\n",
                 outContent.toString());
     }
 
