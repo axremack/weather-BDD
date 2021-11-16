@@ -17,7 +17,6 @@ public class DBManager {
                 .append("city VARCHAR(100) PRIMARY KEY NOT NULL,\n")
                 .append("current_temperature DOUBLE NOT NULL,\n")
                 .append("wind_speed DOUBLE\n")
-                //.append("PRIMARY KEY (fetched_at, city)\n")
                 .append(");\n");
 
         try {
@@ -26,7 +25,6 @@ public class DBManager {
             if (conn != null) {
                 Statement s = conn.createStatement();
                 s.execute(query.toString());
-                System.out.println("Table successfully created");
 
                 s.close();
             }
@@ -44,7 +42,7 @@ public class DBManager {
                 .append("current_temperature,\n")
                 .append("wind_speed\n")
                 .append(")\n")
-                .append("VALUES(?,?,?,?)");
+                .append("VALUES(?,?,?,?);");
 
         try {
             Class.forName("org.sqlite.JDBC");
@@ -66,7 +64,7 @@ public class DBManager {
     }
 
     public static void dropTable() {
-        String query = "DROP TABLE IF EXISTS weather";
+        String query = "DROP TABLE IF EXISTS weather;";
 
         try {
             Connection conn = DriverManager.getConnection(url);
@@ -80,7 +78,7 @@ public class DBManager {
     }
 
     public static void displayDB() {
-        String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather";
+        String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather;";
 
         try {
             Connection conn = DriverManager.getConnection(url);
@@ -103,7 +101,46 @@ public class DBManager {
     }
 
     public static void displayDBOrderedBy(String param) {
-        String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather ORDER BY " + param;
+        String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather ORDER BY " + param + ";";
+
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            Statement s = conn.createStatement();
+            ResultSet rs = s.executeQuery(query);
+
+            while (rs.next()) {
+                System.out.println(rs.getInt("fetched_at") + " - " +
+                        rs.getString("city") + " - " +
+                        rs.getDouble("current_temperature") + " - " +
+                        rs.getDouble("wind_speed"));
+            }
+
+            conn.close();
+            s.close();
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteOldData() {
+        long epochDate = System.currentTimeMillis()/1000 - 86400; // 1 day before today
+        String query = "DELETE FROM weather WHERE fetched_at < " + epochDate + ";";
+
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            Statement s = conn.createStatement();
+            s.execute(query);
+
+            conn.close();
+            s.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void findInDB(String city) {
+        String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather WHERE city LIKE \"%" + city + "%\";";
 
         try {
             Connection conn = DriverManager.getConnection(url);

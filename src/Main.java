@@ -17,21 +17,26 @@ public class Main {
         }
 
         try {
-            WeatherFetcher weatherFetcher = new WeatherFetcher();
-            weather = weatherFetcher.getWeatherIn(args[0]);
-            System.out.println(weather);
+            DBManager d = new DBManager(url);
+            d.findInDB(args[0]);
 
-            List<Object> list = new ArrayList<>();
+            //WeatherFetcher weatherFetcher = new WeatherFetcher();
+            //weather = weatherFetcher.getWeatherIn(args[0]);
+            //System.out.println(weather);
+
+
+            /*List<Object> list = new ArrayList<>();
             list.add(weather.getDT());
             list.add(weather.getCity());
             list.add(weather.getTemp().getTemp());
-            list.add(weather.getWind().getSpeed());
+            list.add(weather.getWind().getSpeed());*/
 
-            DBManager d = new DBManager(url);
+
+            /*DBManager d = new DBManager(url);
             d.createWeatherTable();
             d.insertValues(list);
             d.displayDBOrderedBy("city");
-            d.deleteOldData();
+            d.deleteOldData();*/
         } catch (Exception e){
             e.printStackTrace();
         }
