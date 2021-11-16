@@ -52,6 +52,8 @@ public class Main {
         System.out.println();
         d.displayDB();
 
+        d.displayDBOrderedBy("current_temperature");
+
 
     }
 }

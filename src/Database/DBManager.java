@@ -13,15 +13,12 @@ public class DBManager {
     public static void createWeatherTable() {
         StringBuilder query = new StringBuilder();
         query.append("CREATE TABLE IF NOT EXISTS weather (\n")
-                .append("fetched_at INTEGER PRIMARY KEY NOT NULL,\n")
-                .append("city VARCHAR(100) NOT NULL,\n")
+                .append("fetched_at INTEGER NOT NULL,\n")
+                .append("city VARCHAR(100) PRIMARY KEY NOT NULL,\n")
                 .append("current_temperature DOUBLE NOT NULL,\n")
                 .append("wind_speed DOUBLE\n")
                 //.append("PRIMARY KEY (fetched_at, city)\n")
                 .append(");\n");
-
-        // Printing the query to be sure of the syntax
-        System.out.println(query);
 
         try {
             Class.forName("org.sqlite.JDBC");
@@ -84,6 +81,29 @@ public class DBManager {
 
     public static void displayDB() {
         String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather";
+
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            Statement s = conn.createStatement();
+            ResultSet rs = s.executeQuery(query);
+
+            while (rs.next()) {
+                System.out.println(rs.getInt("fetched_at") + " - " +
+                        rs.getString("city") + " - " +
+                        rs.getDouble("current_temperature") + " - " +
+                        rs.getDouble("wind_speed"));
+            }
+
+            conn.close();
+            s.close();
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void displayDBOrderedBy(String param) {
+        String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather ORDER BY " + param;
 
         try {
             Connection conn = DriverManager.getConnection(url);
