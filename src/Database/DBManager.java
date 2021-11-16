@@ -13,11 +13,11 @@ public class DBManager {
     public static void createWeatherTable() {
         StringBuilder query = new StringBuilder();
         query.append("CREATE TABLE IF NOT EXISTS weather (\n")
-                .append("fetchedAt INTEGER NOT NULL,\n")
+                .append("fetched_at INTEGER PRIMARY KEY NOT NULL,\n")
                 .append("city VARCHAR(100) NOT NULL,\n")
                 .append("current_temperature DOUBLE NOT NULL,\n")
-                .append("wind_speed DOUBLE,\n")
-                .append("PRIMARY KEY (fetchedAt, city)\n")
+                .append("wind_speed DOUBLE\n")
+                //.append("PRIMARY KEY (fetched_at, city)\n")
                 .append(");\n");
 
         // Printing the query to be sure of the syntax
@@ -39,7 +39,7 @@ public class DBManager {
     public static void insertValues(List<Object> list_values) {
         StringBuilder query = new StringBuilder();
         query.append("INSERT INTO weather(\n")
-                .append("fetchedAt,\n")
+                .append("fetched_at,\n")
                 .append("city,\n")
                 .append("current_temperature,\n")
                 .append("wind_speed\n")
@@ -75,5 +75,22 @@ public class DBManager {
         }
     }
 
+    public static void displayDB() {
+        String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather";
 
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            Statement s = conn.createStatement();
+            ResultSet rs = s.executeQuery(query);
+
+            while (rs.next()) {
+                System.out.println(rs.getInt("fetched_at") + " - " +
+                        rs.getString("city") + " - " +
+                        rs.getDouble("current_temperature") + " - " +
+                        rs.getDouble("wind_speed"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
