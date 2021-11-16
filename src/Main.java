@@ -6,9 +6,9 @@ import java.sql.DriverManager;
 
 public class Main {
     public static void main(String[] args) {
-        String filename = "weather.db";
+        String url = "jdbc:sqlite:src/Database/weather.db";
 
-        DBManager d = new DBManager(filename);
+        DBManager d = new DBManager(url);
         d.createWeatherTable();
 
 
