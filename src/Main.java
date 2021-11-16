@@ -3,6 +3,8 @@ import Database.DBManager;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,6 +13,23 @@ public class Main {
         DBManager d = new DBManager(url);
         d.createWeatherTable();
 
+        List<Object> list = new ArrayList<>(){{
+            add((int) (new java.util.Date().getTime() / 1000));
+            add("city");
+            add("weather type");
+            add("weather description");
+            add(20.0);
+            add(20.0);
+            add(20.0);
+            add(20.0);
+            add(2);
+            add(2);
+            add(3.0);
+            add(3.0);
+            add(3.0);
+        }};
+
+        d.insertValues(list);
 
     }
 }
