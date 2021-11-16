@@ -133,4 +133,50 @@ public class DBManagerTest extends TestCase {
                 "4 - city2 - 21.0 - 0.0\n",
             outContent.toString());
     }
+
+    @Test
+    public void testTableDisplayOrderedByCity() {
+        List<Object> listValues2 = new ArrayList<>(){{
+            add(4);
+            add("a");
+            add(21.0);
+            add(0.0);
+        }};
+
+        d.createWeatherTable();
+        d.insertValues(listValues);
+        d.insertValues(listValues2);
+
+        d.displayDBOrderedBy("city");
+        assertEquals("Table successfully created\n" +
+                        "Values have been added to database\n" +
+                        "Values have been added to database\n" +
+                        "4 - a - 21.0 - 0.0\n" +
+                        "3 - city - 20.0 - 3.0\n",
+                outContent.toString());
+    }
+
+    @Test
+    public void testTableDisplayOrderedByTemperature() {
+        List<Object> listValues2 = new ArrayList<>(){{
+            add(4);
+            add("city2");
+            add(6.0);
+            add(0.0);
+        }};
+
+        d.createWeatherTable();
+        d.insertValues(listValues);
+        d.insertValues(listValues2);
+
+        d.displayDBOrderedBy("current_temperature");
+        assertEquals("Table successfully created\n" +
+                        "Values have been added to database\n" +
+                        "Values have been added to database\n" +
+                        "4 - city2 - 6.0 - 0.0\n" +
+                        "3 - city - 20.0 - 3.0\n",
+                outContent.toString());
+    }
+
+
 }
