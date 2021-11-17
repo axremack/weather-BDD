@@ -13,7 +13,7 @@ public class DBManager {
         DBManager.url = url_given;
     }
 
-    public static void createWeatherTable() {
+    public static void createWeatherTable() throws SQLException, ClassNotFoundException {
         StringBuilder query = new StringBuilder();
         query.append("CREATE TABLE IF NOT EXISTS weather (\n")
                 .append("fetched_at INTEGER NOT NULL,\n")
@@ -33,11 +33,11 @@ public class DBManager {
             }
             conn.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
-    public static void insertValues(List<Object> list_values) {
+    public static void insertValues(List<Object> list_values) throws SQLException, ClassNotFoundException {
         StringBuilder query = new StringBuilder();
         query.append("INSERT INTO weather(\n")
                 .append("fetched_at,\n")
@@ -62,7 +62,7 @@ public class DBManager {
             }
             conn.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -80,7 +80,7 @@ public class DBManager {
         }
     }
 
-    public static void displayDB() {
+    public static void displayDB() throws SQLException {
         String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather;";
 
         try {
@@ -99,11 +99,11 @@ public class DBManager {
             s.close();
             rs.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
-    public static void displayDBOrderedBy(String param) {
+    public static void displayDBOrderedBy(String param) throws SQLException {
         String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather ORDER BY " + param + ";";
 
         try {
@@ -122,11 +122,11 @@ public class DBManager {
             s.close();
             rs.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
-    public static void deleteOldData() {
+    public static void deleteOldData() throws SQLException {
         long epochDate = System.currentTimeMillis()/1000 - 86400; // 1 day before today
         String query = "DELETE FROM weather WHERE fetched_at < " + epochDate + ";";
 
@@ -138,11 +138,11 @@ public class DBManager {
             conn.close();
             s.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
-    public static boolean findInDB(String city) {
+    public static boolean findInDB(String city) throws SQLException {
         String query = "SELECT fetched_at, city, current_temperature, wind_speed FROM weather WHERE city LIKE \"%" + city + "%\";";
         boolean found = false;
 
@@ -166,7 +166,7 @@ public class DBManager {
             s.close();
             rs.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
 
         return found;

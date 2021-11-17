@@ -2,6 +2,7 @@ import CityWeather.CityWeather;
 import Database.DBManager;
 import WeatherParsing.WeatherFetcher;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +39,12 @@ public class Main {
             }
 
             d.displayDBOrderedBy("city");
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (SQLException e){
+            System.err.println("Error : invalid SQL request");
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error : invalid city entered");
+        } catch (Exception e) {
+            System.err.println("Error");
         }
 
     }
